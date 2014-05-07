@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>jQuery UI Progressbar - Default functionality</title>
+  <link rel="stylesheet" href="jquery-ui.css">
+  <script src="jquery-1.10.2.js"></script>
+  <script src="jquery-ui.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <script>
+  $(function() {
+	  
+	  function process( q, num, fn, done ) {
+		    // remove a batch of items from the queue
+		    var items = q.splice(0, num),
+		        count = items.length;
+
+		    // no more items?
+		    if ( !count ) {
+		        // exec done callback if specified
+		        done && done();
+		        // quit
+		        return;
+		    }
+
+		    // loop over each item
+		    for ( var i = 0; i < count; i++ ) {
+		        // call callback, passing item and
+		        // a "done" callback
+		        fn(items[i], function() {
+		            // when done, decrement counter and
+		            // if counter is 0, process next batch
+		            --count || process(q, num, fn, done);
+		        });
+		    }
+		}
+
+		// sample logging function
+		function log( msg ) {
+		    $('#logs').append(msg + '<br/>');
+		}
+		
+		var total = 100
+
+		// create queue
+		var queue = [];
+		for ( var i = 0; i < total; i++ ) { queue.push(i); }
+
+		// a per-item action
+		function doEach( item, done ) {
+		    log('starting ' + item + '...');
+		    // (simulating ajax)
+		    
+		    // You Ajax request code write here!!
+		    setTimeout(function(){
+		        log('completed ' + item + '!'); 
+		        done();
+		    }, Math.random() * 1000);
+		    
+		     
+			    $( "#progressbar" ).progressbar({
+				      value: ((item+1)/total)*100
+				});
+		    
+		}
+
+		// an all-done action
+		function doDone() {
+		    log('all done!');
+		}
+
+		
+		
+		
+	   $( "#progressbar" ).progressbar({
+	      value: 0
+	    });
+	  
+	  $("#start").click(function(){
+		// start processing queue!
+	 
+			process(queue, 5, doEach, doDone); 
+	  });
+   
+  });
+  </script>
+</head>
+<body>
+ 
+<div id="progressbar"></div>
+ 
+ <input value='开始推送' id='start' type='button'>
+ 
+ <div id='logs'></div>
+</body>
+</html>
